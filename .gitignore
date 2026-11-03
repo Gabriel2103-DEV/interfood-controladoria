@@ -218,3 +218,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# DuckDB & Project Data Artifacts
+*.duckdb
+*.duckdb.wal
+logs/*.log
+data/raw/*.csv
+data/processed/*.csv
+data/processed/*.parquet
+data/exports/*.xlsx
+data/exports/*.html
+data/exports/*.png
