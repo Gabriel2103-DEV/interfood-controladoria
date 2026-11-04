@@ -40,7 +40,7 @@ def load_all_to_duckdb(
 
         # Limpar fatos antes das dimensões para evitar conflitos lógicos
         for table_name in reversed(LOAD_ORDER):
-            db.connect().execute(f"DELETE FROM {table_name}")
+            db.connect().execute(f"DELETE FROM {table_name}").fetchall()
 
         for table_name in LOAD_ORDER:
             df = transformed_data[table_name]

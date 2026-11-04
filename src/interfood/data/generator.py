@@ -178,13 +178,13 @@ MOTIVOS_DEVOLUCAO = [
 
 # Base mensal de despesas operacionais por departamento e tipo (R$)
 BASE_DESPESAS_DEPT = {
-    "DEP001": {"pessoal": 95_000, "aluguel": 12_000, "outros": 18_000},
-    "DEP002": {"pessoal": 65_000, "aluguel": 8_000, "administrativo": 12_000},
-    "DEP003": {"pessoal": 110_000, "aluguel": 25_000, "logistica": 65_000},
-    "DEP004": {"pessoal": 52_000, "aluguel": 5_000, "administrativo": 8_000},
-    "DEP005": {"pessoal": 45_000, "marketing": 38_000, "outros": 9_000},
-    "DEP006": {"pessoal": 48_000, "aluguel": 5_000, "administrativo": 7_000},
-    "DEP007": {"pessoal": 85_000, "aluguel": 14_000, "administrativo": 15_000},
+    "DEP001": {"pessoal": 52_000, "aluguel": 7_000, "outros": 11_000},
+    "DEP002": {"pessoal": 36_000, "aluguel": 5_000, "administrativo": 7_000},
+    "DEP003": {"pessoal": 62_000, "aluguel": 15_000, "logistica": 38_000},
+    "DEP004": {"pessoal": 28_000, "aluguel": 3_500, "administrativo": 5_000},
+    "DEP005": {"pessoal": 25_000, "marketing": 22_000, "outros": 5_500},
+    "DEP006": {"pessoal": 26_000, "aluguel": 3_500, "administrativo": 4_500},
+    "DEP007": {"pessoal": 48_000, "aluguel": 8_000, "administrativo": 9_000},
 }
 
 CONTA_DESPESA_MAP = {
@@ -373,7 +373,7 @@ def gerar_pedidos_e_itens(
 
             for k, prod_id in enumerate(prods_pedido):
                 prod_id_str = str(prod_id)
-                quantidade = int(rng.integers(5, 65))
+                quantidade = int(rng.integers(18, 135))
                 preco = round(prod_preco[prod_id_str] * float(rng.uniform(0.97, 1.03)), 4)
                 custo = round(prod_custo[prod_id_str] * float(rng.uniform(0.98, 1.02)), 4)
                 desconto_perc = float(rng.choice([0.0, 0.0, 0.0, 0.02, 0.03, 0.05]))
@@ -444,7 +444,6 @@ def gerar_devolucoes(pedidos_df: pd.DataFrame, itens_df: pd.DataFrame) -> pd.Dat
         itens_ped = itens_por_pedido.get(pid)
         if itens_ped is None or len(itens_ped) == 0:
             continue
-        item = itens_ped.iloc[int(rng.integers(0, len(itens_ped)))]
 
         data_pedido = pd.Timestamp(pedido["data_pedido"])
         dias_apos = int(rng.integers(3, 18))
@@ -452,23 +451,24 @@ def gerar_devolucoes(pedidos_df: pd.DataFrame, itens_df: pd.DataFrame) -> pd.Dat
         if data_dev > pd.Timestamp(END_DATE):
             data_dev = pd.Timestamp(END_DATE)
 
-        qtd_max = max(1, int(item["quantidade"]) // 2)
-        qtd_devolvida = int(rng.integers(1, qtd_max + 1))
-        valor_dev = round(qtd_devolvida * float(item["preco_unitario"]), 2)
-        cmv_rev = round(qtd_devolvida * float(item["custo_unitario"]), 2)
+        motivo_ped = str(rng.choice(MOTIVOS_DEVOLUCAO))
+        for _, item in itens_ped.iterrows():
+            qtd_devolvida = max(1, int(round(int(item["quantidade"]) * float(rng.uniform(0.35, 0.65)))))
+            valor_dev = round(qtd_devolvida * float(item["preco_unitario"]), 2)
+            cmv_rev = round(qtd_devolvida * float(item["custo_unitario"]), 2)
 
-        registros.append({
-            "devolucao_id": f"DEV{len(registros) + 1:06d}",
-            "pedido_origem_id": pid,
-            "produto_id": item["produto_id"],
-            "data_devolucao": str(data_dev.date()),
-            "ano": int(data_dev.year),
-            "mes": int(data_dev.month),
-            "quantidade": qtd_devolvida,
-            "valor_devolucao": valor_dev,
-            "cmv_revertido": cmv_rev,
-            "motivo": str(rng.choice(MOTIVOS_DEVOLUCAO)),
-        })
+            registros.append({
+                "devolucao_id": f"DEV{len(registros) + 1:06d}",
+                "pedido_origem_id": pid,
+                "produto_id": item["produto_id"],
+                "data_devolucao": str(data_dev.date()),
+                "ano": int(data_dev.year),
+                "mes": int(data_dev.month),
+                "quantidade": qtd_devolvida,
+                "valor_devolucao": valor_dev,
+                "cmv_revertido": cmv_rev,
+                "motivo": motivo_ped,
+            })
 
     return pd.DataFrame(registros)
 

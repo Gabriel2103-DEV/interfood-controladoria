@@ -41,10 +41,13 @@ class DatabaseConnection:
         self.disconnect()
 
     def execute_script(self, sql_file_path: Path) -> None:
-        """Lê e executa um arquivo SQL completo no DuckDB."""
+        """Lê e executa um arquivo SQL completo no DuckDB consumindo cada statement."""
         conn = self.connect()
         sql_text = sql_file_path.read_text(encoding="utf-8")
-        conn.execute(sql_text)
+        for statement in sql_text.split(";"):
+            stmt = statement.strip()
+            if stmt:
+                conn.execute(stmt).fetchall()
 
     def init_schema_and_views(self) -> None:
         """Cria todas as tabelas do Star Schema e as Views analíticas."""
@@ -62,13 +65,13 @@ class DatabaseConnection:
         """Carrega um DataFrame Pandas em uma tabela do DuckDB de forma idempotente."""
         conn = self.connect()
         if truncate:
-            conn.execute(f"DELETE FROM {table_name}")
+            conn.execute(f"DELETE FROM {table_name}").fetchall()
         conn.register("_temp_df_load", df)
         cols = ", ".join(df.columns)
-        conn.execute(f"INSERT INTO {table_name} ({cols}) SELECT {cols} FROM _temp_df_load")
+        conn.execute(f"INSERT INTO {table_name} ({cols}) SELECT {cols} FROM _temp_df_load").fetchall()
         conn.unregister("_temp_df_load")
-        res = conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()
-        return int(res[0]) if res else 0
+        rows = conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchall()
+        return int(rows[0][0]) if rows else 0
 
     def get_table_counts(self) -> dict[str, int]:
         """Retorna a contagem de registros de todas as tabelas base do banco."""
@@ -90,8 +93,8 @@ class DatabaseConnection:
         counts = {}
         for t in tables:
             try:
-                row = conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()
-                counts[t] = int(row[0]) if row else 0
+                rows = conn.execute(f"SELECT COUNT(*) FROM {t}").fetchall()
+                counts[t] = int(rows[0][0]) if rows else 0
             except Exception:
                 counts[t] = 0
         return counts

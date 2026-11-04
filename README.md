@@ -1,72 +1,79 @@
 # INTERFOOD FINANCIAL INTELLIGENCE
 
-> ⚠️ **AVISO: Todos os dados contidos neste projeto são 100% SINTÉTICOS e fictícios.**
-> Gerados com seed=42 para fins de demonstração e análise de Controladoria.
-> Nenhum dado reflete operações reais de qualquer empresa.
+> ⚠️ **AVISO LEGAL — DADOS 100% SINTÉTICOS:** Todos os dados contidos neste repositório (clientes, CNPJs, produtos, pedidos, custos, despesas, orçamentos e indicadores) são **100% sintéticos e fictícios**, gerados deterministicamente (`seed=42`) para fins exclusivos de demonstração técnica em **Controladoria, Engenharia de Dados e Ciência de Dados**. Nenhuma informação real da Interfood ou de terceiros foi utilizada.
 
 ---
 
-## Visão Geral
+## 🎯 Visão Executiva do Case
 
-O **INTERFOOD FINANCIAL INTELLIGENCE** é um case completo de **Controladoria e Ciência de Dados** para uma empresa distribuidora de alimentos fictícia. O projeto demonstra:
+O **INTERFOOD FINANCIAL INTELLIGENCE** simula e analisa **36 meses de operação (Janeiro/2022 a Dezembro/2024)** de uma distribuidora atacadista B2B de alimentos e bebidas no Brasil, integrando:
 
-- 🏗️ **Modelagem de Dados** (Star Schema / DuckDB)
-- 🔄 **Pipeline ETL** completa com validações e logs
-- 📊 **KPIs Financeiros** (DRE, Margens, Budget vs Realizado)
-- 🧪 **Testes de Integridade e Reconciliação**
-- 📋 **Relatórios Executivos**
-
-### Período: Janeiro/2022 a Dezembro/2024 (36 meses)
+- 🏗️ **Arquitetura Dimensional (Star Schema)** sobre **DuckDB** (6 dimensões, 6 tabelas fato e 6 views OLAP).
+- 🔄 **Pipeline ETL Idempotente** em Python com validação de schema, logs estruturados (`Loguru`) e reconciliação contábil automática centavo a centavo.
+- 📊 **Motor de Controladoria (DRE, Budget Matricial & KPIs)**: apuração completa da DRE mensal e anual, análise de variação Orçado vs. Realizado, curva ABC de clientes/SKUs e semáforo executivo de metas.
+- 🎨 **Identidade Visual Executiva**: Paleta institucional **Azul-Marinho (`#0A1628`)**, **Branco (`#FFFFFF`)** e **Verde (`#00A86B`)**, com valores em **R$** e formatação numérica brasileira (`pt-BR`).
+- 🧪 **Qualidade Assegurada**: Suíte automatizada `Pytest` com **16 testes** de integridade referencial, reconciliação contábil da DRE e validação de KPIs.
 
 ---
 
-## Tecnologias
+## 📈 Destaques Financeiros do Dataset Sintético (Consolidado 36 Meses)
 
-| Componente         | Tecnologia          |
-|--------------------|---------------------|
-| Linguagem          | Python 3.11+        |
-| Banco de Dados     | DuckDB 0.10+        |
-| Manipulação        | Pandas 2.1+         |
-| Numérico           | NumPy 1.26+         |
-| Dados Sintéticos   | Faker 22+           |
-| Interface Rich     | Rich 13.7+          |
-| Validação          | Pydantic 2.5+       |
-| Logging            | Loguru 0.7+         |
-| Testes             | Pytest 7.4+         |
-| Relatórios         | OpenPyXL + MatPlotlib |
+| Indicador Executivo | 2022 | 2023 | 2024 | Total 36 Meses | Status Meta |
+| :--- | ---: | ---: | ---: | ---: | :---: |
+| **Pedidos Faturados** | 5.264 | 5.904 | 6.813 | **17.981** | 🟢 |
+| **Receita Bruta de Vendas** | R$ 32.086.620,62 | R$ 35.941.347,20 | R$ 41.914.279,49 | **R$ 109.942.247,31** | 🟢 |
+| **Receita Líquida (DRE)** | R$ 27.143.091,17 | R$ 30.391.425,40 | R$ 35.439.754,75 | **R$ 92.974.271,32** | 🟢 |
+| **Lucro Bruto** | R$ 8.399.839,58 | R$ 9.403.524,18 | R$ 10.965.724,80 | **R$ 28.769.088,56** | 🟢 |
+| **Margem Bruta (%)** | 30,95% | 30,94% | 30,94% | **30,94%** | 🟢 `>= 28%` |
+| **EBITDA (LAJIDA)** | R$ 3.350.684,96 | R$ 4.058.431,20 | R$ 5.308.665,30 | **R$ 12.717.781,46** | 🟢 |
+| **Margem EBITDA (%)** | 12,34% | 13,35% | 14,98% | **13,68%** | 🟢 `>= 10%` |
+| **Lucro Líquido** | R$ 2.128.057,26 | R$ 2.643.802,38 | R$ 3.582.893,97 | **R$ 8.354.753,61** | 🟢 |
+| **Margem Líquida (%)** | 7,84% | 8,70% | 10,11% | **8,99%** | 🟢 `>= 6%` |
 
 ---
 
-## Estrutura do Projeto
+## 🗂️ Estrutura do Projeto
 
-```
+```text
 interfood-controladoria/
 ├── src/
 │   └── interfood/
-│       ├── config/          # Configurações centralizadas
-│       ├── database/        # Schema SQL, conexão DuckDB, views
-│       ├── data/            # Gerador de dados sintéticos
-│       ├── etl/             # Pipeline ETL (extract, transform, load)
-│       └── kpis/            # Calculadores de KPIs financeiros
-├── data/
-│   ├── raw/                 # CSVs gerados pelo gerador
-│   ├── processed/           # Dados processados
-│   └── exports/             # Relatórios e exportações
-├── tests/
-│   ├── test_integridade.py  # Testes de integridade de dados
-│   ├── test_reconciliacao.py # Testes de reconciliação financeira
-│   └── test_kpis.py         # Validação de KPIs
-├── docs/
-│   ├── arquitetura.md       # Arquitetura do sistema
-│   ├── dicionario_dados.md  # Dicionário de dados
-│   ├── kpis.md              # Definição de KPIs
-│   └── regras_negocio.md    # Regras de negócio
+│       ├── config/
+│       │   └── settings.py            # Configurações, caminhos, paleta de cores e formatadores R$ (pt-BR)
+│       ├── data/
+│       │   └── generator.py           # Gerador sintético determinístico (seed=42, 36 meses, 11 tabelas)
+│       ├── database/
+│       │   ├── schema.sql             # DDL Star Schema (6 dimensões e 6 tabelas fato)
+│       │   ├── views.sql              # 6 Views analíticas OLAP (DRE, Clientes, Mix, Budget, Evolução, Estoque)
+│       │   ├── connection.py          # Gerenciador de conexão DuckDB
+│       │   └── queries.py             # Consultas analíticas estruturadas em DataFrames
+│       ├── etl/
+│       │   ├── extract.py             # Extração de CSVs e validação estrita de schemas
+│       │   ├── transform.py           # Transformação, dim_tempo e reconciliação Pedido vs. Itens
+│       │   ├── load.py                # Carga transacional idempotente no DuckDB
+│       │   └── pipeline.py            # Orquestrador ETL com telemetria e logs (Loguru)
+│       └── kpis/
+│           └── calculators.py         # Calculadores de KPIs, YoY, aderência ao Budget e Semáforo
 ├── scripts/
-│   ├── 01_generate_data.py  # Gera dados sintéticos
-│   ├── 02_setup_database.py # Configura banco DuckDB
-│   ├── 03_run_etl.py        # Executa pipeline ETL
-│   └── 04_relatorio_executivo.py # Relatório executivo
-├── logs/                    # Logs de execução
+│   ├── 01_generate_data.py            # Etapa 2: Gera os 11 CSVs sintéticos em data/raw/
+│   ├── 02_setup_database.py           # Etapa 3: Inicializa o banco DuckDB, tabelas e views
+│   ├── 03_run_etl.py                  # Etapa 4: Executa a pipeline ETL ponta a ponta
+│   ├── 04_relatorio_executivo.py      # Etapa 6: Exibe relatório Rich e exporta Dashboard HTML + CSVs
+│   └── run_all.py                     # Executa todas as etapas e a suíte Pytest em sequência
+├── tests/
+│   ├── conftest.py                    # Fixtures Pytest com auto-população do banco
+│   ├── test_integridade.py            # Testes de chaves, unicidade, período de 36 meses e saldos
+│   ├── test_reconciliacao.py          # Testes contábeis (Pedido == Itens, identidades da DRE)
+│   └── test_kpis.py                   # Testes de intervalos de margens, YoY e aderência ao Budget
+├── docs/
+│   ├── arquitetura.md                 # Arquitetura, fluxo Mermaid, ADRs e identidade visual
+│   ├── dicionario_dados.md            # Dicionário completo das 12 tabelas e 6 views
+│   ├── kpis.md                        # Fórmulas matemáticas, fontes e semáforos dos KPIs
+│   └── regras_negocio.md              # Regras de sazonalidade, impostos, devoluções, estoque e DRE
+├── data/
+│   ├── raw/                           # CSVs brutos gerados localmente
+│   ├── processed/                     # Resumos mensais processados pelo ETL
+│   └── exports/                       # Dashboard HTML executivo e CSVs de DRE / Budget
 ├── pyproject.toml
 ├── requirements.txt
 └── .env.example
@@ -74,93 +81,37 @@ interfood-controladoria/
 
 ---
 
-## Como Executar
+## 🚀 Como Executar
 
 ### 1. Instalar dependências
-
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configurar ambiente
-
+### 2. Executar o fluxo completo de uma só vez (Recomendado)
 ```bash
-cp .env.example .env
+python scripts/run_all.py
 ```
 
-### 3. Gerar dados sintéticos
-
+Ou executar etapa por etapa:
 ```bash
 python scripts/01_generate_data.py
-```
-
-### 4. Configurar banco de dados
-
-```bash
 python scripts/02_setup_database.py
-```
-
-### 5. Executar pipeline ETL
-
-```bash
 python scripts/03_run_etl.py
-```
-
-### 6. Ver relatório executivo
-
-```bash
 python scripts/04_relatorio_executivo.py
-```
-
-### 7. Rodar testes
-
-```bash
 pytest tests/ -v --tb=short
 ```
 
 ---
 
-## Modelo de Dados
+## 📚 Documentação Técnica e de Negócios
 
-### Dimensões
-- **dim_cliente**: 60 clientes fictícios (redes, restaurantes, atacados)
-- **dim_produto**: 80 produtos em 5 categorias alimentícias
-- **dim_departamento**: 7 departamentos corporativos
-- **dim_vendedor**: 8 vendedores com comissões
-- **dim_tempo**: Calendário completo 2022-2024
-- **dim_plano_contas**: Hierarquia DRE completa
-
-### Fatos
-- **fato_pedido**: ~15.000-18.000 pedidos no período
-- **fato_item_pedido**: ~60.000-90.000 itens de pedido
-- **fato_devolucao**: ~3% do valor de vendas
-- **fato_despesa**: Despesas mensais por departamento
-- **fato_orcamento**: Budget anual mensalizado
-- **fato_estoque**: Movimentações de entrada/saída
+- [📐 Arquitetura do Sistema](docs/arquitetura.md)
+- [📖 Dicionário de Dados (Star Schema & Views)](docs/dicionario_dados.md)
+- [📊 Manual de KPIs e Semáforos](docs/kpis.md)
+- [⚖️ Regras de Negócio e Contábeis](docs/regras_negocio.md)
+- [🖥️ Dashboard Executivo HTML](data/exports/relatorio_executivo_interfood.html)
 
 ---
 
-## KPIs Monitorados
-
-| KPI | Fórmula |
-|-----|---------|
-| Margem Bruta % | Lucro Bruto / Receita Líquida × 100 |
-| Margem EBITDA % | EBITDA / Receita Líquida × 100 |
-| Margem Líquida % | Lucro Líquido / Receita Líquida × 100 |
-| Ticket Médio | Receita Bruta / Nº Pedidos |
-| Índice de Devolução | Devoluções / Receita Bruta × 100 |
-| Variação Orçamento | (Realizado - Orçado) / Orçado × 100 |
-| Crescimento YoY | (Receita Ano N - Ano N-1) / Ano N-1 × 100 |
-
----
-
-## Disclaimer
-
-> **DADOS SINTÉTICOS**: Todo o conteúdo deste repositório — clientes, produtos, pedidos,
-> valores financeiros e demais dados — é 100% fictício, gerado programaticamente com
-> seed=42 para reproduzibilidade. Qualquer semelhança com empresas, CNPJs ou situações
-> reais é mera coincidência.
-
----
-
-*INTERFOOD FINANCIAL INTELLIGENCE v1.0.0 | Interfood Analytics Team*
+*INTERFOOD FINANCIAL INTELLIGENCE v1.0.0 — Case Fictício de Controladoria e Ciência de Dados (Dados 100% Sintéticos)*
