@@ -44,6 +44,7 @@ def main() -> int:
     _run_script("02_setup_database.py")
     _run_script("03_run_etl.py")
     _run_script("04_relatorio_executivo.py")
+    _run_script("05_export_dashboard_data.py")
 
     print("\n" + "=" * 80)
     print("EXECUTANDO TESTES PYTEST (INTEGRIDADE, RECONCILIACAO E KPIS)")

@@ -1,511 +1,586 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>INTERFOOD FINANCIAL INTELLIGENCE — Relatório Executivo (Dados Sintéticos)</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #F4F6F9;
-            color: #0A1628;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #0A1628;
-            color: #FFFFFF;
-            padding: 28px 40px;
-            border-bottom: 5px solid #00A86B;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 26px;
-            letter-spacing: 0.5px;
-        }
-        header p {
-            margin: 8px 0 0 0;
-            color: #00A86B;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .container {
-            max-width: 1280px;
-            margin: 28px auto;
-            padding: 0 24px 40px 24px;
-        }
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px;
-            margin-bottom: 30px;
-        }
-        .kpi-card {
-            background: #FFFFFF;
-            border-top: 4px solid #00A86B;
-            border-radius: 8px;
-            padding: 18px 20px;
-            box-shadow: 0 2px 8px rgba(10, 22, 40, 0.08);
-        }
-        .kpi-card .label {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #4A5568;
-            font-weight: 700;
-        }
-        .kpi-card .value {
-            font-size: 22px;
-            font-weight: 800;
-            color: #0A1628;
-            margin-top: 6px;
-        }
-        .kpi-card .sub {
-            font-size: 12px;
-            color: #00A86B;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-        .section-card {
-            background: #FFFFFF;
-            border-radius: 8px;
-            padding: 24px;
-            margin-bottom: 28px;
-            box-shadow: 0 2px 8px rgba(10, 22, 40, 0.08);
-        }
-        .section-card h2 {
-            margin-top: 0;
-            font-size: 18px;
-            color: #0A1628;
-            border-left: 4px solid #00A86B;
-            padding-left: 12px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13.5px;
-            margin-top: 12px;
-        }
-        th {
-            background-color: #0A1628;
-            color: #FFFFFF;
-            text-align: left;
-            padding: 10px 12px;
-            font-weight: 600;
-        }
-        td {
-            padding: 9px 12px;
-            border-bottom: 1px solid #E2E8F0;
-        }
-        tr:nth-child(even) {
-            background-color: #F8FAFC;
-        }
-        .num {
-            text-align: right;
-            font-variant-numeric: tabular-nums;
-        }
-        .highlight {
-            color: #00A86B;
-            font-weight: 700;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 12px;
-            color: #4A5568;
-            background: #FFFFFF;
-            border-top: 2px solid #00A86B;
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>INTERFOOD FINANCIAL INTELLIGENCE — Dashboard Interativo de Controladoria & FP&A</title>
+    <meta name="description" content="Dashboard Executivo Interativo de Controladoria, DRE Gerencial, Orçamento (Budget x Actual), Rentabilidade e Simulação Financeira — Interfood Distribuidora de Alimentos." />
+    <link rel="stylesheet" href="assets/css/dashboard.css" />
 </head>
 <body>
-    <header>
-        <h1>INTERFOOD FINANCIAL INTELLIGENCE — PAINEL EXECUTIVO DE CONTROLADORIA</h1>
-        <p>AVISO LEGAL: DADOS 100% SINTÉTICOS E FICTÍCIOS (SEED=42) | PERÍODO: JAN/2022 A DEZ/2024 (36 MESES)</p>
+
+    <!-- ================================================================== -->
+    <!-- 1. TOPBAR EXECUTIVA                                                -->
+    <!-- ================================================================== -->
+    <header class="if-topbar">
+        <div class="if-topbar-inner">
+            <div class="if-brand">
+                <div class="if-brand-logo" aria-hidden="true">IF</div>
+                <div>
+                    <h1 class="if-brand-title">INTERFOOD FINANCIAL INTELLIGENCE</h1>
+                    <p class="if-brand-subtitle">
+                        Controladoria, Planejamento Financeiro (FP&amp;A) &amp; Ciência de Dados •
+                        <span id="headerDatasetCounts">Carregando base DuckDB...</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="if-topbar-actions">
+                <span class="if-badge-synthetic" title="Todos os dados pertencem a uma distribuidora fictícia (Seed=42) para fins técnicos e demonstrativos.">
+                    ⚠ DADOS 100% SINTÉTICOS (SEED=42)
+                </span>
+                <span id="storageStatusBadge" class="if-badge-storage">
+                    ✓ Base Original Oficial
+                </span>
+                <a href="relatorio_estatico_original.html" class="if-btn if-btn-outline-light if-btn-sm" title="Abrir o relatório estático original preservado">
+                    📄 Relatório Estático Original
+                </a>
+                <button type="button" id="btnPresentationMode" class="if-btn if-btn-green if-btn-sm">
+                    🖥 Modo Apresentação Executiva
+                </button>
+            </div>
+        </div>
     </header>
-    <div class="container">
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="label">Receita Bruta (36M)</div>
-                <div class="value">R$ 109.942.247,31</div>
-                <div class="sub">YoY 2024 vs 2023: +16,62%</div>
+
+    <!-- ================================================================== -->
+    <!-- 2. BARRA DE NAVEGAÇÃO ENTRE MÓDULOS                                -->
+    <!-- ================================================================== -->
+    <nav class="if-nav-bar" aria-label="Módulos do Dashboard">
+        <div class="if-nav-inner">
+            <button type="button" class="if-nav-tab active" data-module-tab="executivo">
+                📊 1. Visão Executiva &amp; KPIs
+            </button>
+            <button type="button" class="if-nav-tab" data-module-tab="dre">
+                📑 2. DRE Gerencial &amp; Budget x Actual
+            </button>
+            <button type="button" class="if-nav-tab" data-module-tab="rentabilidade">
+                🎯 3. Rentabilidade (Produtos, Categorias, Regiões &amp; Clientes)
+            </button>
+            <button type="button" class="if-nav-tab" data-module-tab="gestao">
+                ⚙️ 4. Gestão de Dados (Edição, Import/Export &amp; Persistência)
+            </button>
+        </div>
+    </nav>
+
+    <!-- ================================================================== -->
+    <!-- 3. PAINEL GLOBAL DE FILTROS DINÂMICOS SIMULTÂNEOS                  -->
+    <!-- ================================================================== -->
+    <section class="if-filter-panel" aria-label="Filtros Dinâmicos do Dashboard">
+        <div class="if-filter-inner">
+            <div class="if-filter-grid">
+                <div class="if-filter-group">
+                    <label for="filterDataInicio">Data Inicial</label>
+                    <input type="date" id="filterDataInicio" class="if-filter-control" value="2022-01-01" min="2022-01-01" max="2024-12-31" />
+                </div>
+
+                <div class="if-filter-group">
+                    <label for="filterDataFim">Data Final</label>
+                    <input type="date" id="filterDataFim" class="if-filter-control" value="2024-12-31" min="2022-01-01" max="2024-12-31" />
+                </div>
+
+                <div class="if-filter-group">
+                    <label for="filterAno">Ano Fiscal</label>
+                    <select id="filterAno" class="if-filter-control">
+                        <option value="TODOS">Todos os Anos (2022–2024)</option>
+                    </select>
+                </div>
+
+                <div class="if-filter-group">
+                    <label for="filterMes">Mês de Competência</label>
+                    <select id="filterMes" class="if-filter-control">
+                        <option value="TODOS">Todos os Meses (Jan–Dez)</option>
+                    </select>
+                </div>
+
+                <div class="if-filter-group">
+                    <label for="filterCategoria">Categoria de Produto</label>
+                    <select id="filterCategoria" class="if-filter-control">
+                        <option value="TODAS">Todas as Categorias</option>
+                    </select>
+                </div>
+
+                <div class="if-filter-group">
+                    <label for="filterProduto">Produto (SKU)</label>
+                    <select id="filterProduto" class="if-filter-control">
+                        <option value="TODOS">Todos os Produtos</option>
+                    </select>
+                </div>
+
+                <div class="if-filter-group">
+                    <label for="filterRegiao">Região Geográfica</label>
+                    <select id="filterRegiao" class="if-filter-control">
+                        <option value="TODAS">Todas as Regiões</option>
+                    </select>
+                </div>
+
+                <div class="if-filter-group">
+                    <label for="filterCliente">Cliente B2B</label>
+                    <select id="filterCliente" class="if-filter-control">
+                        <option value="TODOS">Todos os Clientes</option>
+                    </select>
+                </div>
             </div>
-            <div class="kpi-card">
-                <div class="label">Receita Líquida (36M)</div>
-                <div class="value">R$ 92.902.781,45</div>
-                <div class="sub">17.981 pedidos faturados</div>
-            </div>
-            <div class="kpi-card">
-                <div class="label">Lucro Bruto (36M)</div>
-                <div class="value">R$ 28.746.123,67</div>
-                <div class="sub">Margem Bruta: 30,94%</div>
-            </div>
-            <div class="kpi-card">
-                <div class="label">EBITDA Operacional (36M)</div>
-                <div class="value">R$ 12.709.277,97</div>
-                <div class="sub">Margem EBITDA: 13,68%</div>
-            </div>
-            <div class="kpi-card">
-                <div class="label">Lucro Líquido (36M)</div>
-                <div class="value">R$ 8.348.420,69</div>
-                <div class="sub">Margem Líquida: 8,99%</div>
+
+            <div class="if-filter-status-bar">
+                <div class="if-filter-summary" id="filterSummaryText">
+                    Inicializando motor de cálculo financeiro...
+                </div>
+                <button type="button" id="btnResetFilters" class="if-btn if-btn-secondary if-btn-sm">
+                    ↺ Limpar Todos os Filtros
+                </button>
             </div>
         </div>
+    </section>
 
-        <div class="section-card">
-            <h2>1. Demonstração do Resultado do Exercício Consolidada (DRE 2022–2024) — Dados Sintéticos</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Ano</th>
-                        <th class="num">Pedidos</th>
-                        <th class="num">Receita Bruta</th>
-                        <th class="num">(-) Deduções</th>
-                        <th class="num">(=) Receita Líquida</th>
-                        <th class="num">(-) CMV Líquido</th>
-                        <th class="num">(=) Lucro Bruto</th>
-                        <th class="num">(-) Despesas SG&A</th>
-                        <th class="num">(=) EBITDA</th>
-                        <th class="num">(=) Lucro Líquido</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-        <tr>
-            <td><strong>2022</strong></td>
-            <td class="num">5.264</td>
-            <td class="num">R$ 32.086.652,23</td>
-            <td class="num">R$ 4.975.409,99</td>
-            <td class="num"><strong>R$ 27.111.242,24</strong></td>
-            <td class="num">R$ 18.718.976,03</td>
-            <td class="num">R$ 8.392.266,21 (30,95%)</td>
-            <td class="num">R$ 5.038.741,39</td>
-            <td class="num highlight">R$ 3.353.524,82 (12,37%)</td>
-            <td class="num highlight">R$ 2.126.456,16 (7,84%)</td>
-        </tr>
-        
-        <tr>
-            <td><strong>2023</strong></td>
-            <td class="num">5.904</td>
-            <td class="num">R$ 35.941.372,68</td>
-            <td class="num">R$ 5.551.757,32</td>
-            <td class="num"><strong>R$ 30.389.615,36</strong></td>
-            <td class="num">R$ 20.989.173,03</td>
-            <td class="num">R$ 9.400.442,33 (30,93%)</td>
-            <td class="num">R$ 5.350.177,91</td>
-            <td class="num highlight">R$ 4.050.264,42 (13,33%)</td>
-            <td class="num highlight">R$ 2.643.520,42 (8,70%)</td>
-        </tr>
-        
-        <tr>
-            <td><strong>2024</strong></td>
-            <td class="num">6.813</td>
-            <td class="num">R$ 41.914.222,40</td>
-            <td class="num">R$ 6.512.298,55</td>
-            <td class="num"><strong>R$ 35.401.923,85</strong></td>
-            <td class="num">R$ 24.448.508,72</td>
-            <td class="num">R$ 10.953.415,13 (30,94%)</td>
-            <td class="num">R$ 5.647.926,40</td>
-            <td class="num highlight">R$ 5.305.488,73 (14,99%)</td>
-            <td class="num highlight">R$ 3.578.444,11 (10,11%)</td>
-        </tr>
-        
-                </tbody>
-            </table>
-        </div>
+    <!-- ================================================================== -->
+    <!-- 4. CONTEÚDO PRINCIPAL DOS MÓDULOS                                  -->
+    <!-- ================================================================== -->
+    <main class="if-main">
 
-        <div class="section-card">
-            <h2>2. Semáforo de Metas de Controladoria (36 Meses)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Indicador Chave (KPI)</th>
-                        <th class="num">Realizado</th>
-                        <th class="num">Meta Corporativa</th>
-                        <th style="text-align:center;">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-        <tr>
-            <td><strong>Margem Bruta (%)</strong></td>
-            <td class="num">30,94%</td>
-            <td class="num">>= 28,00%</td>
-            <td style="text-align:center;"><span style="background:#00A86B;color:#FFFFFF;padding:4px 12px;border-radius:12px;font-weight:bold;font-size:12px;">VERDE</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>Margem EBITDA (%)</strong></td>
-            <td class="num">13,68%</td>
-            <td class="num">>= 10,00%</td>
-            <td style="text-align:center;"><span style="background:#00A86B;color:#FFFFFF;padding:4px 12px;border-radius:12px;font-weight:bold;font-size:12px;">VERDE</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>Margem Líquida (%)</strong></td>
-            <td class="num">8,99%</td>
-            <td class="num">>= 6,00%</td>
-            <td style="text-align:center;"><span style="background:#00A86B;color:#FFFFFF;padding:4px 12px;border-radius:12px;font-weight:bold;font-size:12px;">VERDE</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>Índice de Devolução (%)</strong></td>
-            <td class="num">2,30%</td>
-            <td class="num"><= 3,50%</td>
-            <td style="text-align:center;"><span style="background:#00A86B;color:#FFFFFF;padding:4px 12px;border-radius:12px;font-weight:bold;font-size:12px;">VERDE</span></td>
-        </tr>
-        
-        <tr>
-            <td><strong>CMV / Receita Líquida (%)</strong></td>
-            <td class="num">69,06%</td>
-            <td class="num"><= 72,00%</td>
-            <td style="text-align:center;"><span style="background:#00A86B;color:#FFFFFF;padding:4px 12px;border-radius:12px;font-weight:bold;font-size:12px;">VERDE</span></td>
-        </tr>
-        
-                </tbody>
-            </table>
-        </div>
+        <!-- ============================================================== -->
+        <!-- MÓDULO 1: VISÃO EXECUTIVA & KPIs                               -->
+        <!-- ============================================================== -->
+        <section id="mod-executivo" class="if-module-panel active">
+            <!-- 8 Cards de Indicadores Financeiros -->
+            <div class="if-kpi-grid" id="kpiCardsGrid"></div>
 
-        <div class="section-card">
-            <h2>3. Top 10 Clientes por Receita Bruta (Dados Sintéticos)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Cliente (Fictício)</th>
-                        <th>Segmento</th>
-                        <th>UF</th>
-                        <th class="num">Pedidos</th>
-                        <th class="num">Receita Bruta</th>
-                        <th class="num">Margem Bruta %</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-        <tr>
-            <td>1º</td>
-            <td>Santos Azevedo S/A (Hotel) [SINTÉTICO]</td>
-            <td>Hotel</td>
-            <td>PR</td>
-            <td class="num">339</td>
-            <td class="num"><strong>R$ 2.139.325,12</strong></td>
-            <td class="num">39,27%</td>
-        </tr>
-        
-        <tr>
-            <td>2º</td>
-            <td>da Mota Rios - ME (Padaria) [SINTÉTICO]</td>
-            <td>Padaria</td>
-            <td>GO</td>
-            <td class="num">315</td>
-            <td class="num"><strong>R$ 2.018.330,50</strong></td>
-            <td class="num">39,33%</td>
-        </tr>
-        
-        <tr>
-            <td>3º</td>
-            <td>Abreu (Hotel) [SINTÉTICO]</td>
-            <td>Hotel</td>
-            <td>CE</td>
-            <td class="num">315</td>
-            <td class="num"><strong>R$ 1.977.087,33</strong></td>
-            <td class="num">39,26%</td>
-        </tr>
-        
-        <tr>
-            <td>4º</td>
-            <td>Andrade (Padaria) [SINTÉTICO]</td>
-            <td>Padaria</td>
-            <td>GO</td>
-            <td class="num">300</td>
-            <td class="num"><strong>R$ 1.974.612,21</strong></td>
-            <td class="num">39,30%</td>
-        </tr>
-        
-        <tr>
-            <td>5º</td>
-            <td>Castro (Restaurante) [SINTÉTICO]</td>
-            <td>Restaurante</td>
-            <td>CE</td>
-            <td class="num">310</td>
-            <td class="num"><strong>R$ 1.963.879,46</strong></td>
-            <td class="num">39,27%</td>
-        </tr>
-        
-        <tr>
-            <td>6º</td>
-            <td>da Mata (Supermercado) [SINTÉTICO]</td>
-            <td>Supermercado</td>
-            <td>CE</td>
-            <td class="num">312</td>
-            <td class="num"><strong>R$ 1.963.770,67</strong></td>
-            <td class="num">39,14%</td>
-        </tr>
-        
-        <tr>
-            <td>7º</td>
-            <td>Vargas (Atacado) [SINTÉTICO]</td>
-            <td>Atacado</td>
-            <td>BA</td>
-            <td class="num">321</td>
-            <td class="num"><strong>R$ 1.951.210,33</strong></td>
-            <td class="num">39,30%</td>
-        </tr>
-        
-        <tr>
-            <td>8º</td>
-            <td>Nunes Barros S/A (Restaurante) [SINTÉTICO]</td>
-            <td>Restaurante</td>
-            <td>SP</td>
-            <td class="num">314</td>
-            <td class="num"><strong>R$ 1.950.478,45</strong></td>
-            <td class="num">39,32%</td>
-        </tr>
-        
-        <tr>
-            <td>9º</td>
-            <td>Siqueira (Supermercado) [SINTÉTICO]</td>
-            <td>Supermercado</td>
-            <td>GO</td>
-            <td class="num">313</td>
-            <td class="num"><strong>R$ 1.946.078,19</strong></td>
-            <td class="num">39,23%</td>
-        </tr>
-        
-        <tr>
-            <td>10º</td>
-            <td>Câmara (Restaurante) [SINTÉTICO]</td>
-            <td>Restaurante</td>
-            <td>RJ</td>
-            <td class="num">311</td>
-            <td class="num"><strong>R$ 1.939.497,95</strong></td>
-            <td class="num">39,26%</td>
-        </tr>
-        
-                </tbody>
-            </table>
-        </div>
+            <!-- Linha 1 de Gráficos Interativos -->
+            <div class="if-charts-grid">
+                <article class="if-card">
+                    <div class="if-card-header">
+                        <div>
+                            <h2 class="if-card-title">Evolução Mensal: Receita Líquida, Lucro Bruto &amp; EBITDA</h2>
+                            <p class="if-card-subtitle">Série histórica dinâmica reagindo aos filtros e edições (passe o mouse sobre as barras/pontos)</p>
+                        </div>
+                        <span class="if-badge-green">Valores em R$</span>
+                    </div>
+                    <div class="if-card-body">
+                        <div class="if-chart-container" id="chartEvolution"></div>
+                    </div>
+                </article>
 
-        <div class="section-card">
-            <h2>4. Top 10 Produtos por Geração de Margem Bruta (Dados Sintéticos)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>SKU</th>
-                        <th>Produto</th>
-                        <th>Categoria</th>
-                        <th class="num">Qtd. Vendida</th>
-                        <th class="num">Receita Bruta</th>
-                        <th class="num">Margem Bruta (R$ / %)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-        <tr>
-            <td>1º</td>
-            <td><code>SKU-BEB-0048</code></td>
-            <td>Destilado Premium Envelhecido 1L</td>
-            <td>Bebidas</td>
-            <td class="num">80.781</td>
-            <td class="num">R$ 7.431.521,82</td>
-            <td class="num highlight">R$ 2.859.028,17 (39,15%)</td>
-        </tr>
-        
-        <tr>
-            <td>2º</td>
-            <td><code>SKU-CAR-0031</code></td>
-            <td>Contrafilé Bovino Maturado kg</td>
-            <td>Carnes e Frios</td>
-            <td class="num">82.786</td>
-            <td class="num">R$ 4.802.220,61</td>
-            <td class="num highlight">R$ 1.820.928,53 (38,58%)</td>
-        </tr>
-        
-        <tr>
-            <td>3º</td>
-            <td><code>SKU-BEB-0047</code></td>
-            <td>Espumante Brut Nacional 750ml</td>
-            <td>Bebidas</td>
-            <td class="num">75.881</td>
-            <td class="num">R$ 4.475.884,75</td>
-            <td class="num highlight">R$ 1.742.914,17 (39,62%)</td>
-        </tr>
-        
-        <tr>
-            <td>4º</td>
-            <td><code>SKU-CAR-0032</code></td>
-            <td>Fraldinha Bovina Resfriada kg</td>
-            <td>Carnes e Frios</td>
-            <td class="num">79.507</td>
-            <td class="num">R$ 3.974.581,21</td>
-            <td class="num highlight">R$ 1.518.030,79 (38,88%)</td>
-        </tr>
-        
-        <tr>
-            <td>5º</td>
-            <td><code>SKU-BEB-0036</code></td>
-            <td>Cerveja Puro Malte Lager 350ml 12un</td>
-            <td>Bebidas</td>
-            <td class="num">75.094</td>
-            <td class="num">R$ 3.492.864,65</td>
-            <td class="num highlight">R$ 1.328.059,25 (38,69%)</td>
-        </tr>
-        
-        <tr>
-            <td>6º</td>
-            <td><code>SKU-CAR-0021</code></td>
-            <td>Salame Tipo Italiano kg</td>
-            <td>Carnes e Frios</td>
-            <td class="num">79.099</td>
-            <td class="num">R$ 3.323.357,86</td>
-            <td class="num highlight">R$ 1.290.917,45 (39,50%)</td>
-        </tr>
-        
-        <tr>
-            <td>7º</td>
-            <td><code>SKU-LAT-0013</code></td>
-            <td>Caixa Leite UHT 12x1L</td>
-            <td>Laticínios</td>
-            <td class="num">74.787</td>
-            <td class="num">R$ 3.665.898,86</td>
-            <td class="num highlight">R$ 1.290.501,46 (35,76%)</td>
-        </tr>
-        
-        <tr>
-            <td>8º</td>
-            <td><code>SKU-CAR-0026</code></td>
-            <td>Blanquet de Peru Fatiado kg</td>
-            <td>Carnes e Frios</td>
-            <td class="num">76.010</td>
-            <td class="num">R$ 2.813.436,83</td>
-            <td class="num highlight">R$ 1.096.026,17 (39,61%)</td>
-        </tr>
-        
-        <tr>
-            <td>9º</td>
-            <td><code>SKU-CAR-0029</code></td>
-            <td>Peito de Peru Defumado kg</td>
-            <td>Carnes e Frios</td>
-            <td class="num">77.953</td>
-            <td class="num">R$ 2.610.023,46</td>
-            <td class="num highlight">R$ 1.006.290,04 (39,22%)</td>
-        </tr>
-        
-        <tr>
-            <td>10º</td>
-            <td><code>SKU-LAT-0005</code></td>
-            <td>Queijo Prato Lanche kg</td>
-            <td>Laticínios</td>
-            <td class="num">74.323</td>
-            <td class="num">R$ 2.749.894,11</td>
-            <td class="num highlight">R$ 997.191,22 (36,84%)</td>
-        </tr>
-        
-                </tbody>
-            </table>
+                <article class="if-card">
+                    <div class="if-card-header">
+                        <div>
+                            <h2 class="if-card-title">Ponte de Resultado (DRE Waterfall)</h2>
+                            <p class="if-card-subtitle">Formação do Lucro Líquido a partir da Receita Operacional Bruta</p>
+                        </div>
+                        <span class="if-badge-green">Estrutura DRE</span>
+                    </div>
+                    <div class="if-card-body">
+                        <div class="if-chart-container" id="chartWaterfall"></div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Linha 2 de Gráficos Interativos -->
+            <div class="if-charts-grid">
+                <article class="if-card">
+                    <div class="if-card-header">
+                        <div>
+                            <h2 class="if-card-title">Aderência Orçamentária — Budget x Actual</h2>
+                            <p class="if-card-subtitle">Comparativo entre Orçado (Budget) e Realizado (Actual) nas grandes rubricas</p>
+                        </div>
+                        <span class="if-badge-green">FP&amp;A / Orçamento</span>
+                    </div>
+                    <div class="if-card-body">
+                        <div class="if-chart-container" id="chartBudget"></div>
+                    </div>
+                </article>
+
+                <article class="if-card">
+                    <div class="if-card-header">
+                        <div>
+                            <h2 class="if-card-title">Rentabilidade Comercial por Categoria</h2>
+                            <p class="if-card-subtitle">Receita Bruta (barra azul-marinho) vs. Margem Bruta Comercial (barra verde)</p>
+                        </div>
+                        <span class="if-badge-green">Mix de Produtos</span>
+                    </div>
+                    <div class="if-card-body">
+                        <div class="if-chart-container" id="chartCategory"></div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Semáforo de Governança da Controladoria -->
+            <article class="if-card">
+                <div class="if-card-header">
+                    <div>
+                        <h2 class="if-card-title">Semáforo de Governança e Metas da Controladoria</h2>
+                        <p class="if-card-subtitle">Avaliação automática dos indicadores consolidados frente às metas corporativas parametrizadas</p>
+                    </div>
+                </div>
+                <div class="if-card-body" style="padding:0;">
+                    <div class="if-table-wrap" style="border:none;border-radius:0;">
+                        <table class="if-table">
+                            <thead>
+                                <tr>
+                                    <th>Indicador Estratégico (KPI)</th>
+                                    <th class="num">Resultado Apurado (Filtro Atual)</th>
+                                    <th class="num">Meta Corporativa</th>
+                                    <th>Status do Semáforo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodySemaforo"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- MÓDULO 2: DRE GERENCIAL COMPLETA & BUDGET X ACTUAL             -->
+        <!-- ============================================================== -->
+        <section id="mod-dre" class="if-module-panel">
+            <article class="if-card" style="margin-bottom:20px;">
+                <div class="if-card-header">
+                    <div>
+                        <h2 class="if-card-title">Demonstração do Resultado do Exercício (DRE Gerencial)</h2>
+                        <p class="if-card-subtitle">Reconciliada automaticamente com Vendas, Custos, Devoluções, Despesas SG&amp;A e Parâmetros Fiscais</p>
+                    </div>
+                    <div class="if-subtabs">
+                        <button type="button" class="if-subtab-btn active" data-dre-mode="anual">Visão Anual Consolidada</button>
+                        <button type="button" class="if-subtab-btn" data-dre-mode="mensal">Visão Mensal Detalhada</button>
+                    </div>
+                </div>
+                <div class="if-card-body" style="padding:0;">
+                    <div class="if-table-wrap" style="border:none;border-radius:0;max-height:620px;">
+                        <table class="if-table">
+                            <thead id="theadDRE"></thead>
+                            <tbody id="tbodyDRE"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+
+            <article class="if-card">
+                <div class="if-card-header">
+                    <div>
+                        <h2 class="if-card-title">Análise Detalhada de Orçamento — Budget x Actual por Departamento e Conta</h2>
+                        <p class="if-card-subtitle">Desvios absolutos (R$), variações percentuais (%) e índice de aderência orçamentária</p>
+                    </div>
+                </div>
+                <div class="if-card-body" style="padding:0;">
+                    <div class="if-table-wrap" style="border:none;border-radius:0;">
+                        <table class="if-table">
+                            <thead>
+                                <tr>
+                                    <th>Centro de Custo / Departamento</th>
+                                    <th>Conta Contábil</th>
+                                    <th>Natureza</th>
+                                    <th class="num">Valor Orçado (Budget)</th>
+                                    <th class="num">Valor Realizado (Actual)</th>
+                                    <th class="num">Variação Absoluta (R$)</th>
+                                    <th class="num">Variação (%)</th>
+                                    <th class="num">Aderência (%)</th>
+                                    <th>Avaliação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyBudgetDetail"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- MÓDULO 3: RENTABILIDADE COMERCIAL MULTIDIMENSIONAL             -->
+        <!-- ============================================================== -->
+        <section id="mod-rentabilidade" class="if-module-panel">
+            <!-- Categorias e Regiões lado a lado -->
+            <div class="if-charts-grid" style="margin-bottom:20px;">
+                <article class="if-card">
+                    <div class="if-card-header">
+                        <div>
+                            <h2 class="if-card-title">Rentabilidade por Categoria de Produto</h2>
+                            <p class="if-card-subtitle">Volume, Receita Bruta, Descontos, Devoluções, CMV e Margem Bruta Comercial</p>
+                        </div>
+                    </div>
+                    <div class="if-card-body" style="padding:0;">
+                        <div class="if-table-wrap" style="border:none;border-radius:0;">
+                            <table class="if-table">
+                                <thead>
+                                    <tr>
+                                        <th>Categoria</th>
+                                        <th class="num">Qtd</th>
+                                        <th class="num">Receita Bruta</th>
+                                        <th class="num">Descontos</th>
+                                        <th class="num">Devoluções</th>
+                                        <th class="num">Rec. Líq. Com.</th>
+                                        <th class="num">CMV Bruto</th>
+                                        <th class="num">Margem Bruta (R$)</th>
+                                        <th class="num">MB (%)</th>
+                                        <th class="num">Share (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyRentCategorias"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="if-card">
+                    <div class="if-card-header">
+                        <div>
+                            <h2 class="if-card-title">Rentabilidade por Região Geográfica</h2>
+                            <p class="if-card-subtitle">Desempenho regional das operações B2B da Interfood</p>
+                        </div>
+                    </div>
+                    <div class="if-card-body" style="padding:0;">
+                        <div class="if-table-wrap" style="border:none;border-radius:0;">
+                            <table class="if-table">
+                                <thead>
+                                    <tr>
+                                        <th>Região</th>
+                                        <th class="num">Volume (Un.)</th>
+                                        <th class="num">Receita Bruta</th>
+                                        <th class="num">Rec. Líq. Com.</th>
+                                        <th class="num">CMV Total</th>
+                                        <th class="num">Margem Bruta (R$)</th>
+                                        <th class="num">MB (%)</th>
+                                        <th class="num">Share (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyRentRegioes"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Rentabilidade por Produto (80 SKUs) -->
+            <article class="if-card" style="margin-bottom:20px;">
+                <div class="if-card-header">
+                    <div>
+                        <h2 class="if-card-title">Rentabilidade Detalhada por Produto (SKUs)</h2>
+                        <p class="if-card-subtitle">Análise individual de margem de contribuição por SKU</p>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                        <span class="if-badge-green" id="prodCountBadge">80 SKUs</span>
+                        <input type="search" id="inputProdSearch" class="if-filter-control" style="width:220px;" placeholder="🔍 Buscar SKU, nome ou categoria..." />
+                        <select id="selectProdSort" class="if-filter-control" style="width:195px;">
+                            <option value="margem_bruta_valor">Ordenar: Maior Margem (R$)</option>
+                            <option value="receita_bruta">Ordenar: Maior Receita Bruta</option>
+                            <option value="margem_bruta_perc">Ordenar: Maior Margem (%)</option>
+                            <option value="quantidade_vendida">Ordenar: Maior Volume (Qtd)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="if-card-body" style="padding:0;">
+                    <div class="if-table-wrap" style="border:none;border-radius:0;max-height:440px;">
+                        <table class="if-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>ID Produto</th>
+                                    <th>Descrição do Produto</th>
+                                    <th>Categoria</th>
+                                    <th class="num">Qtd Vendida</th>
+                                    <th class="num">Receita Bruta</th>
+                                    <th class="num">CMV Total</th>
+                                    <th class="num">Margem Bruta (R$)</th>
+                                    <th class="num">Margem (%)</th>
+                                    <th class="num">Share Receita</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyRentProdutos"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Rentabilidade por Cliente (60 Clientes B2B) -->
+            <article class="if-card">
+                <div class="if-card-header">
+                    <div>
+                        <h2 class="if-card-title">Rentabilidade por Cliente B2B (Curva ABC Comercial)</h2>
+                        <p class="if-card-subtitle">Receita, CMV, Margem Comercial e Ticket Médio por cliente atendido</p>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                        <span class="if-badge-green" id="cliCountBadge">60 Clientes</span>
+                        <input type="search" id="inputCliSearch" class="if-filter-control" style="width:240px;" placeholder="🔍 Buscar cliente, canal ou UF..." />
+                    </div>
+                </div>
+                <div class="if-card-body" style="padding:0;">
+                    <div class="if-table-wrap" style="border:none;border-radius:0;max-height:440px;">
+                        <table class="if-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>ID Cliente</th>
+                                    <th>Razão Social (Sintética)</th>
+                                    <th>Segmento / Canal</th>
+                                    <th>Região (UF)</th>
+                                    <th class="num">Qtd Comprada</th>
+                                    <th class="num">Receita Bruta</th>
+                                    <th class="num">CMV Total</th>
+                                    <th class="num">Margem Bruta (R$)</th>
+                                    <th class="num">Margem (%)</th>
+                                    <th class="num">Ticket Médio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyRentClientes"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- MÓDULO 4: GESTÃO DE DADOS (CRUD, LOCALSTORAGE, IMPORT/EXPORT)  -->
+        <!-- ============================================================== -->
+        <section id="mod-gestao" class="if-module-panel">
+            <!-- Aviso claro sobre Persistência Local no Navegador (GitHub Pages) -->
+            <div class="if-local-notice" role="note">
+                <div class="if-local-notice-icon">🔒</div>
+                <div>
+                    <strong>Aviso de Persistência Local (GitHub Pages &amp; Armazenamento no Navegador):</strong>
+                    Todas as edições, inclusões, exclusões e importações realizadas neste módulo são salvas exclusivamente no
+                    <code>localStorage</code> do seu navegador atual e recalculam instantaneamente os indicadores, gráficos e a DRE.
+                    <strong>Suas alterações são locais ao seu navegador e não alteram automaticamente o repositório GitHub nem a visão de outros usuários.</strong>
+                    Você pode exportar a base editada em <strong>JSON</strong> ou <strong>CSV</strong> a qualquer momento, importá-la novamente ou clicar em
+                    <em>"Restaurar Base Original"</em> para voltar aos dados oficiais (Seed=42).
+                </div>
+            </div>
+
+            <!-- Barra de Ferramentas de Persistência e Importação/Exportação -->
+            <div class="if-toolbar">
+                <div class="if-subtabs">
+                    <button type="button" class="if-subtab-btn active" data-gestao-tab="vendas">
+                        🛒 Vendas &amp; Custos (Receita / CMV)
+                    </button>
+                    <button type="button" class="if-subtab-btn" data-gestao-tab="despesas">
+                        🏢 Despesas Operacionais (SG&amp;A)
+                    </button>
+                    <button type="button" class="if-subtab-btn" data-gestao-tab="orcamento">
+                        🎯 Orçamento (Budget)
+                    </button>
+                    <button type="button" class="if-subtab-btn" data-gestao-tab="parametros">
+                        ⚖️ Metas &amp; Parâmetros DRE
+                    </button>
+                </div>
+
+                <div class="if-toolbar-group">
+                    <button type="button" id="btnSaveStorage" class="if-btn if-btn-primary if-btn-sm" title="Gravar estado atual no localStorage do navegador">
+                        💾 Salvar no Navegador
+                    </button>
+                    <button type="button" id="btnExportCSV" class="if-btn if-btn-secondary if-btn-sm" title="Exportar a tabela ativa para arquivo CSV">
+                        ⬇ Exportar CSV
+                    </button>
+                    <button type="button" id="btnExportJSON" class="if-btn if-btn-secondary if-btn-sm" title="Exportar toda a base de dados editada para arquivo JSON">
+                        ⬇ Exportar JSON Completo
+                    </button>
+                    <button type="button" id="btnTriggerImport" class="if-btn if-btn-secondary if-btn-sm" title="Importar arquivo JSON completo ou CSV para a tabela ativa com validação prévia">
+                        ⬆ Importar JSON / CSV
+                    </button>
+                    <input type="file" id="inputFileImport" accept=".json,.csv" style="display:none;" />
+                    <button type="button" id="btnRestoreOriginal" class="if-btn if-btn-danger if-btn-sm" title="Descartar alterações locais e restaurar a base original (Seed=42)">
+                        ↺ Restaurar Base Original
+                    </button>
+                </div>
+            </div>
+
+            <!-- Formulário Dinâmico para Adicionar Novo Registro -->
+            <div class="if-form-box" id="gestaoAddFormContainer"></div>
+
+            <!-- Tabela Editável Inline -->
+            <article class="if-card">
+                <div class="if-card-header">
+                    <div>
+                        <h2 class="if-card-title">Editor de Registros Inline com Validação Contábil</h2>
+                        <p class="if-card-subtitle">Altere qualquer valor numérico ou data diretamente na linha e clique em <strong>💾 Salvar</strong> para validar e recalcular o dashboard</p>
+                    </div>
+                    <div id="gestaoPaginationBar" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                        <input type="search" id="inputGestaoSearch" class="if-filter-control" style="width:230px;" placeholder="🔍 Filtrar registros na tabela..." />
+                        <span id="gestaoPageInfo" style="font-size:0.78rem;color:#64748B;font-weight:600;"></span>
+                        <button type="button" id="btnGestaoPrevPage" class="if-btn if-btn-secondary if-btn-sm">◀ Anterior</button>
+                        <button type="button" id="btnGestaoNextPage" class="if-btn if-btn-secondary if-btn-sm">Próxima ▶</button>
+                    </div>
+                </div>
+                <div class="if-card-body" style="padding:0;">
+                    <div class="if-table-wrap" style="border:none;border-radius:0;max-height:560px;">
+                        <table class="if-table">
+                            <thead id="theadGestao"></thead>
+                            <tbody id="tbodyGestao"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+    </main>
+
+    <!-- ================================================================== -->
+    <!-- 5. MODO DE APRESENTAÇÃO EXECUTIVA (BOARDROOM OVERLAY)              -->
+    <!-- ================================================================== -->
+    <aside id="presentationOverlay" class="if-presentation-overlay" aria-label="Modo de Apresentação Executiva">
+        <header class="if-pres-header">
+            <div style="display:flex;align-items:center;gap:14px;">
+                <div class="if-brand-logo">IF</div>
+                <div>
+                    <strong style="font-size:1.05rem;letter-spacing:0.3px;">INTERFOOD FINANCIAL INTELLIGENCE — BOARDROOM PRESENTATION</strong>
+                    <div style="font-size:0.76rem;color:#94A3B8;">
+                        Modo Executivo de Apresentação • <span id="presSlideCounter">Slide 1 de 5</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="if-pres-nav">
+                <span class="if-badge-synthetic">DADOS SINTÉTICOS — FINS DEMONSTRATIVOS</span>
+                <button type="button" class="if-pres-slide-dot active" data-pres-slide="1">1. Sumário</button>
+                <button type="button" class="if-pres-slide-dot" data-pres-slide="2">2. Evolução</button>
+                <button type="button" class="if-pres-slide-dot" data-pres-slide="3">3. DRE Waterfall</button>
+                <button type="button" class="if-pres-slide-dot" data-pres-slide="4">4. Budget x Actual</button>
+                <button type="button" class="if-pres-slide-dot" data-pres-slide="5">5. Categorias</button>
+                <button type="button" id="btnPresPrev" class="if-btn if-btn-outline-light if-btn-sm">◀ Anterior</button>
+                <button type="button" id="btnPresNext" class="if-btn if-btn-green if-btn-sm">Próximo ▶</button>
+                <button type="button" id="btnPresFullscreen" class="if-btn if-btn-outline-light if-btn-sm">⛶ Tela Cheia</button>
+                <button type="button" id="btnPresClose" class="if-btn if-btn-danger if-btn-sm">✕ Sair (ESC)</button>
+            </div>
+        </header>
+
+        <div class="if-pres-body" id="presentationSlideBody"></div>
+
+        <footer class="if-pres-footer">
+            <span>Interfood Distribuidora de Alimentos (Empresa Fictícia — Dados Sintéticos Reproduzíveis Seed=42)</span>
+            <span>Use as setas do teclado (⬅ ➡) para navegar entre os slides ou ESC para sair</span>
+        </footer>
+    </aside>
+
+    <!-- ================================================================== -->
+    <!-- 6. MODAL DE CONFIRMAÇÃO E CONTAINER DE TOASTS                      -->
+    <!-- ================================================================== -->
+    <div id="confirmModalBackdrop" class="if-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+        <div class="if-modal">
+            <div class="if-modal-header">
+                <h3 id="confirmModalTitle">Confirmação</h3>
+                <button type="button" id="btnModalClose" style="background:none;border:none;color:#FFF;font-size:1.1rem;cursor:pointer;">✕</button>
+            </div>
+            <div class="if-modal-body" id="confirmModalBody"></div>
+            <div class="if-modal-footer">
+                <button type="button" id="btnModalCancel" class="if-btn if-btn-secondary">Cancelar</button>
+                <button type="button" id="btnModalConfirm" class="if-btn if-btn-danger">Confirmar</button>
+            </div>
         </div>
     </div>
-    <footer>
-        INTERFOOD FINANCIAL INTELLIGENCE v1.0.0 | Case Fictício de Controladoria e Ciência de Dados | Dados 100% Sintéticos (Seed=42)
+
+    <div id="toastContainer" class="if-toast-container" aria-live="polite"></div>
+
+    <!-- ================================================================== -->
+    <!-- 7. RODAPÉ CORPORATIVO                                              -->
+    <!-- ================================================================== -->
+    <footer class="if-footer">
+        <strong>INTERFOOD FINANCIAL INTELLIGENCE</strong> • Arquitetura de Dados, Engenharia de Software &amp; Controladoria Executiva •
+        Dados 100% Sintéticos (Seed=42) • Compatível com GitHub Pages (100% Offline / Zero Dependências Externas)
     </footer>
+
+    <!-- ================================================================== -->
+    <!-- 8. SCRIPTS MODULARES (CAMINHOS RELATIVOS PARA GITHUB PAGES)        -->
+    <!-- ================================================================== -->
+    <script src="assets/data/interfood_data.js"></script>
+    <script src="assets/js/financial-engine.js"></script>
+    <script src="assets/js/storage-manager.js"></script>
+    <script src="assets/js/charts.js"></script>
+    <script src="assets/js/app.js"></script>
 </body>
 </html>
